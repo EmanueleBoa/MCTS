@@ -1,7 +1,7 @@
 import numpy as np
 from collections import defaultdict
 
-calss Node():
+class Node (object):
     def __init__ (self, state, parent=None):
         self.state = state
         self.parent = parent
