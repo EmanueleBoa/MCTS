@@ -24,35 +24,43 @@ class GameState (object):
             return True
         return False
 
+#     def game_result(self):
+#         board = self.board.reshape((3,3))
+#         # check rows
+#         for i in range(3):
+#             value = int(np.sum(board[i,:])/3)
+#             if np.absolute(value) == 1:
+#                 return value
+#         # check columns
+#         for i in range(3):
+#             value = int(np.sum(board[:,i])/3)
+#             if np.absolute(value) == 1:
+#                 return value
+#         # check diagonal 1
+#         value = int((board[0][0] + board[1][1] + board[2][2])/3)
+#         if np.absolute(value) == 1:
+#             return value
+#         # check diagonal 2
+#         value = int((board[0][2] + board[1][1] + board[2][0])/3)
+#         if np.absolute(value) == 1:
+#             return value
+#         # otherwise it's a tie
+#         return 0
+
     def game_result(self):
-        board = self.board.reshape((3,3))
-        # check rows
-        for i in range(3):
-            value = int(np.sum(board[i,:])/3)
-            if np.absolute(value) == 1:
-                return value
-        # check columns
-        for i in range(3):
-            value = int(np.sum(board[:,i])/3)
-            if np.absolute(value) == 1:
-                return value
-        # check diagonal 1
-        value = int((board[0][0] + board[1][1] + board[2][2])/3)
-        if np.absolute(value) == 1:
-            return value
-        # check diagonal 2
-        value = int((board[0][2] + board[1][1] + board[2][0])/3)
-        if np.absolute(value) == 1:
-            return value
-        # otherwise it's a tie
+        winningLines = np.array([[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])
+        board = self.board
+        for line in winningLines:
+            if len(set(board[line])) == 1:
+                return board[line][0]
         return 0
 
+
     def move(self, action):
-        if action in self.get_legal_actions():
-            self.board[action] = self.player
-            self.player = -self.player
-        else:
-            print("ERROR: action passed to move is not legal!")
+        board = np.copy(self.board)
+        board[action] = self.player
+        player = -1*self.player
+        return GameState(board, player)
 
     def select_random_action(self):
         return np.random.choice(self.get_legal_actions())
@@ -68,3 +76,9 @@ class GameState (object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+def print_board(board):
+    board = board.reshape((3,3))
+    symbol = {1: 'x', -1: 'o', 0: ' '}
+    for row in board:
+        print('|'+symbol[row[0]]+'|'+symbol[row[1]]+'|'+symbol[row[2]]+'|')
