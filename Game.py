@@ -65,6 +65,13 @@ class GameState (object):
     def select_random_action(self):
         return np.random.choice(self.get_legal_actions())
 
+    def simulate_random_game(self):
+        current_state = self
+        while not current_state.is_game_over():
+            action = current_state.select_random_action()
+            current_state = current_state.move(action)
+        return current_state.game_result()
+
     def get_board(self):
         return self.board
 

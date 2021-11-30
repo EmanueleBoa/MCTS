@@ -51,7 +51,6 @@ class Node (object):
         if self.parent:
             self.parent.backpropagate(result)
 
-
     def tree_policy(self, c_param=1.0):
         current_node = self
         while not current_node.is_terminal_node():
@@ -62,11 +61,19 @@ class Node (object):
         return current_node
 
     def rollout(self):
-        current_state = copy.deepcopy(self.state)
-        while not current_state.is_game_over():
-            action = current_state.select_random_action()
-            current_state = current_state.move(action)
-        return current_state.game_result()
+        return self.state.simulate_random_game()
+
+    def print_children_statistics(self):
+        actions = [c.parent_action for c in self.children]
+        rewards = [c.reward() for c in self.children]
+        visits = [c.n() for c in self.children]
+        print('\nStats:')
+        for i in range(len(actions)):
+            print("- move: %2d  reward: %0.2f  visits: %4d" % (actions[i], rewards[i], visits[i]))
+        print('\nSummary:')
+        print("- highest reward: %2d" % (actions[np.argmax(rewards)]))
+        print("- most visited:   %2d\n" % (actions[np.argmax(visits)]))
+
 
 class MCTS (object):
     def __init__ (self, state, c_param=1.):
@@ -81,6 +88,12 @@ class MCTS (object):
     def best_move(self):
         return self.root.best_child(c_param=0.)
 
+    def play_best_move(self):
+        best_child = self.best_move()
+        idx = self.root.children.index(best_child)
+        self.root = self.root.children[idx]
+        self.root.parent = None
+
     def play_move(self, state):
         idx = self.root.children.index(state)
         self.root = self.root.children[idx]
@@ -88,3 +101,6 @@ class MCTS (object):
 
     def root_state(self):
         return self.root.state
+
+    def print_moves_statistics(self):
+        self.root.print_children_statistics()
