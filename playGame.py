@@ -1,4 +1,4 @@
-from Game import *
+from TicTacToe import GameState
 from MCTS import *
 
 N_SWEEPS = 1000
@@ -6,9 +6,9 @@ N_SWEEPS = 1000
 # np.random.seed(1234)
 state = GameState()
 state.new_game()
-mcts = MCTS(state, c_param=1.)
+mcts = MCTS(state, c_param=1., n_sweeps=N_SWEEPS)
 print("STARTING BOARD:\n")
-print_board(state.get_board())
+print(state.to_string())
 
 user = input ("\nInsert 1 to play first, 2 to play second, anything else to watch the AI play: ")
 if user.isdigit():
@@ -21,8 +21,7 @@ while not state.is_game_over():
     player = state.get_player()
     print('\nMOVE %d\n' % (turn))
 
-    for n in range(N_SWEEPS):
-        mcts.sweep()
+    mcts.think()
 
     # mcts.print_moves_statistics()
 
@@ -38,8 +37,6 @@ while not state.is_game_over():
             if not move.isdigit():
                 move = -1
             move = int(move)
-        idx, = np.where(legal_actions == move)
-        idx=idx[0]
         state = state.move(move)
         for child in mcts.root.children:
             if state == child.state and move==child.parent_action:
@@ -48,7 +45,7 @@ while not state.is_game_over():
         mcts.play_best_move()
         state = mcts.root_state()
 
-    print_board(state.get_board())
+    print(state.to_string())
 
     turn += 1
 

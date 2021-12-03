@@ -1,7 +1,7 @@
 import numpy as np
 from collections import defaultdict
 import copy
-from Game import *
+from TicTacToe import GameState
 
 class Node (object):
     def __init__ (self, state, parent=None, parent_action=None):
@@ -76,14 +76,19 @@ class Node (object):
 
 
 class MCTS (object):
-    def __init__ (self, state, c_param=1.):
+    def __init__ (self, state, c_param=1., n_sweeps=100):
         self.root = Node(state)
         self.c_param = c_param
+        self.n_sweeps = n_sweeps
+
+    def think(self):
+        for n in range(self.n_sweeps):
+            self.sweep()
 
     def sweep(self):
         v = self.root.tree_policy(self.c_param)
-        reward = v.rollout()
-        v.backpropagate(reward)
+        result = v.rollout()
+        v.backpropagate(result)
 
     def best_move(self):
         return self.root.best_child(c_param=0.)
