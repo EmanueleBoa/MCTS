@@ -1,7 +1,6 @@
 import numpy as np
 from collections import defaultdict
 import copy
-from TicTacToe import GameState
 
 class Node (object):
     def __init__ (self, state, parent=None, parent_action=None):
@@ -103,6 +102,11 @@ class MCTS (object):
         idx = self.root.children.index(state)
         self.root = self.root.children[idx]
         self.root.parent = None
+
+    def play_move_from_state(self, state):
+        for child in self.root.children:
+            if state == child.state:
+                self.play_move(child)
 
     def root_state(self):
         return self.root.state

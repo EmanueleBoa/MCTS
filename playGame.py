@@ -1,5 +1,5 @@
 from TicTacToe import GameState
-from MCTS import *
+from MCTS import MCTS
 
 N_SWEEPS = 1000
 
@@ -38,9 +38,7 @@ while not state.is_game_over():
                 move = -1
             move = int(move)
         state = state.move(move)
-        for child in mcts.root.children:
-            if state == child.state and move==child.parent_action:
-                mcts.play_move(child)
+        mcts.play_move_from_state(state)
     else:
         mcts.play_best_move()
         state = mcts.root_state()
