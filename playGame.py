@@ -1,4 +1,5 @@
-from TicTacToe import GameState
+# from TicTacToe import GameState
+from ConnectFour import GameState
 from MCTS import MCTS
 
 N_SWEEPS = 1000
